@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,14 +47,26 @@ import com.example.jetpackcomposeinstagram.R
 
 @Composable
 fun LoginScreen(modifier: Modifier, loginViewModel: LoginViewModel) {
+    val isLoading: Boolean by loginViewModel.isLoading.observeAsState(initial = false)
+
     Box(
         modifier
             .fillMaxSize()
             .padding(8.dp)
     ) {
-        Header(Modifier.align(Alignment.TopEnd))
-        Body(Modifier.align(Alignment.Center), loginViewModel)
-        Footer(Modifier.align(Alignment.BottomCenter))
+        if (isLoading) {
+            Box(
+                modifier = modifier
+                    .align(Alignment.Center)
+            ) {
+                CircularProgressIndicator()
+            }
+        } else {
+            Header(Modifier.align(Alignment.TopEnd))
+            Body(Modifier.align(Alignment.Center), loginViewModel)
+            Footer(Modifier.align(Alignment.BottomCenter))
+
+        }
     }
 }
 
@@ -82,7 +95,7 @@ fun Body(modifier: Modifier, loginViewModel: LoginViewModel) {
         Spacer(modifier = Modifier.size(8.dp))
         ForgotPassword(Modifier.align(Alignment.End))
         Spacer(modifier = Modifier.size(16.dp))
-        LoginButton(isEnable = isLoginEnable)
+        LoginButton(isEnable = isLoginEnable, loginViewModel)
         Spacer(modifier = Modifier.size(16.dp))
         LoginDivider()
         Spacer(modifier = Modifier.size(32.dp))
@@ -169,9 +182,9 @@ fun ForgotPassword(modifier: Modifier) {
 }
 
 @Composable
-fun LoginButton(isEnable: Boolean) {
+fun LoginButton(isEnable: Boolean, loginViewModel: LoginViewModel) {
     Button(
-        onClick = { },
+        onClick = { loginViewModel.onLoginSelected() },
         enabled = isEnable,
         modifier = Modifier.fillMaxWidth(),
         colors = ButtonDefaults.buttonColors(
